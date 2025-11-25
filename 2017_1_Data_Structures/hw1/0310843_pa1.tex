@@ -1,0 +1,165 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{pseudocode}
+\usepackage{enumitem}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{
+  language=C++,
+  aboveskip=3mm,
+  belowskip=3mm,
+  numbers=none,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle=\ttfamily,
+  numberstyle=\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  backgroundcolor=\color{black!5}, % set backgroundcolor
+}
+
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+\title{Homework \#1}
+\author{Shao Hua, Huang\\
+DEE2505 - Data Structures}
+
+\begin{document}
+\maketitle
+\section{Objective}
+\begin{enumerate}
+  \item To understand how an implementation of an ADT is used by an application program.
+  \item To become familiar with basic rules of stack, queue, and deque.
+  \item Implement stack, queue and deque by using STL library in c++.
+\end{enumerate}
+\section{Pseudo code}
+\begin{pseudocode}[ruled]{main}{argc, *argv[]}
+  \COMMENT{main program}\\
+  \MAIN
+    fin.open(argv[1])\\
+    fout.open(argv[2])\\
+    getline(fin,cur)\\
+    \WHILE cur \ne ``\#" \DO
+    \BEGIN
+      \COMMENT{initialize mystack with input file}\\
+      \mbox{split cur with space, then store them to deque1}\\
+      \mbox{push deque1 to mystack, then clear deque1}\\
+      \mbox{get line to cur with fin}
+    \END\\
+    \WHILE \mbox{get a and b value with fin} \DO
+    \BEGIN
+      \COMMENT{take out deques of index a and b, combine them, and push back}\\
+      takeTargetFromStack(mystack,myqueue,deque1,deque2,a,b)\\
+      lastmatch=combineProcess(deque1,deque2)\\
+      pushBackProcess(mystack,myqueue,deque1,lastmatch)
+    \END\\
+    printdeque(fout,mystack.top())\\
+    fin.close()\\
+    fout.close()
+  \ENDMAIN\\
+\end{pseudocode}\\
+\begin{pseudocode}[ruled]{takeTargetFromStack}{mystack,myqueue,deque1,deque2,a,b}
+  \COMMENT{Take out the two target deques, and put uncessary deques to queue}\\
+  \COMMENT{This function works with call by reference}\\
+  \IF a < b \THEN
+  \BEGIN
+    needSwap \GETS \TRUE\\
+    swap(a,b)\\
+    \COMMENT{know whether deque1 and deque2 need to swap or not}
+  \END\\
+  \FOR i \GETS 0 \TO a-1 \DO
+    \mbox{push top of mystack to myqueue, and pop mystack}\\
+  deque1 \GETS mystack.top()\\
+  \mbox{pop mystack}\\
+  \FOR i \GETS 0 \TO b-a-1 \DO
+    \mbox{push top of mystack to myqueue, and pop mystack}\\
+  deque2 \GETS mystack.top()\\
+  \mbox{pop mystack}\\
+  \IF needSwap = \TRUE \THEN
+  \mbox{swap deque1 and deque2}
+\end{pseudocode}\\
+\begin{pseudocode}[ruled]{combineProcess}{deque1,deque2}
+  \COMMENT{combine deque1 and deque2 to only one deque1}\\
+  \WHILE \mbox{deque2 is} \NOT \mbox{empty} \DO
+  \BEGIN
+    \IF \mbox{fronts of deque1 and deque2 match} \THEN
+    \BEGIN
+      \mbox{push front of deque2 to front of deque1}\\
+      \mbox{pop front of deque2}\\
+      lastmatch \GETS \TRUE
+    \END
+    \ELSE
+    \BEGIN
+      \mbox{push front of deque2 to back of deque1}\\
+      \mbox{pop front of deque2}\\
+      lastmatch \GETS \FALSE
+    \END
+  \END\\
+  \RETURN{lastmatch}
+\end{pseudocode}\\
+\begin{pseudocode}[ruled]{pushBackProcess}{mystack,myqueue,deque1,lastmatch}
+  \COMMENT{push back deque1 and all deques stored in myqueue}\\
+  \IF lastmatch \THEN
+    \mbox{push deque1, then push all deques in myqueue to mystack}
+  \ELSE
+    \mbox{push all deques in myqueue, then push deque1 to mystack}
+\end{pseudocode}\\
+\begin{pseudocode}[ruled]{printdeque}{deque1}
+  \COMMENT{use ostream and iterator to print deque1 to file or stdout}\\
+  it \GETS deque1.begin()\\
+  \WHILE it \ne deque.end() \DO
+    \mbox{print *} it \mbox{ and then plus 1 to *} it
+\end{pseudocode}\\
+\section{Time complexity analysis}
+There are 3 mainly procedure in my program.\\
+They are reading cards to stack, all combining processes, and print final deque out.\\
+We use step count to analysis time complexity and calculate a roughly value.
+\subsection{Reading cards to stack}
+It it obvious that time complexity depends on total number of cards.\\
+If there are $n$ cards, then step count is approxmiately $2n$ (split token and push to stack).
+\subsection{All combining processes}
+We discard step count about getting number index $a$ and $b$.\\
+$Stacks$ means total initial deques in mystack.\\
+$n(x)$ means number of elements of index $x$ in stack.
+\subsubsection{takeTargetFromStack}
+\begin{enumerate}[label=(\alph*)]
+  \item push to queue or assign to deque
+  \item pop from stack
+\end{enumerate}
+Discard swap process, step count is $2\times max(a,b)$.\\
+In total, there will be $(Stacks-1)$ processes, and add each step count above.
+\subsubsection{combineProcess}
+This process depends on the number of deque2 elements \textit{i.e.} $n(b)$.\\
+Step count will be 3 time that number (push to deque1, pop from deque2, and assign lastmatch)\\
+In total, there will be $(Stacks-1)$ processes, and add each step count above.
+\subsubsection{pushBackProcess}
+In this process, step count will be the number of combined deque elements.\\
+In total, there will be $(Stacks-1)$ processes, and add each step count above.
+\subsection{Print final deque}
+If there are $n$ cards, the program will enter while $n$ times.\\
+In this process, step count will be $n$.
+\subsection{Total step count}
+\begin{align*}
+  stepcount & \approx 2n + \sum_{i=1}^{Stacks-1}\left[2\times max(a,b)+n(b)+(n(a)+n(b))\right]+n\\
+            & = 3n + \sum_{i=1}^{Stacks-1}\left[2\times max(a,b)+n(a)+2n(b)\right]
+\end{align*}
+\section{Conclusion}
+This is an interesting problem (although meaningless) and takes me some time to learn STL library. I learned how to use stack, queue, and deque when implementing this problem. Stack has member functions such as size(), top() and swap(), queue has member functions size(), front(), back(), and deque has $iterator$, front(), back(). All of them have push() and pop(). Using these member function makes me easier to solve the problem. Besides, I also learned how to use vector to split string instead of strtok that I used to learn in C. Looking forward to the next data structure homework.
+\end{document}

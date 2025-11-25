@@ -1,0 +1,136 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+\numberwithin{equation}{section}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  numbers=none,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle=\ttfamily,
+  numberstyle=\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  backgroundcolor=\color{black!5}, % set backgroundcolor
+}
+
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+\title{Homework \#1}
+\author{Shao Hua, Huang\\
+ECM9032 - Machine Learning}
+
+\begin{document}
+\maketitle
+\section{Jensen's inequality (10\%)}
+\begin{proof}
+Use mathematical induction to prove Jensen's inequality.
+  \begin{enumerate}[label=(\alph*)]
+    \item for $M = 2$, the inequality \eqref{1_1} holds
+      \begin{equation}\label{1_1} 
+        f(\sum_{i=1}^{M}\lambda_ix_i)\leq\sum_{i=1}^{M}\lambda_if(x_i)
+      \end{equation}
+      which derived from (1) in problem description
+    \item assume $M = n$ holds, \textit{i.e.}
+      \begin{equation}\label{1_2}
+        f(\sum_{i=1}^{n}\lambda_ix_i)\leq\sum_{i=1}^{n}\lambda_if(x_i) \text{ where }
+        \lambda_i>0 \text{ and } \sum_{i=1}^n\lambda_i=1
+      \end{equation}
+    \item for $M = n + 1$,
+      \begin{align}
+        f(\sum_{i=1}^{n+1}\lambda_ix_i) & = f(\sum_{i=1}^{n}\lambda_ix_i+\lambda_{n+1}x_{n+1})\nonumber\\
+         & = f\left[(1-\lambda_{n+1})\sum_{i=1}^{n}\frac{\lambda_ix_i}{1-\lambda_{n+1}}+\lambda_{n+1}x_{n+1}\right]\label{1_3}\\
+         & \leq (1-\lambda_{n+1})f(\sum_{i=1}^n\frac{\lambda_ix_i}{1-\lambda_{n+1}})+\lambda_{n+1}f(x_{n+1})\label{1_4}\\
+         & \leq (1-\lambda_{n+1})\sum_{i=1}^n\frac{\lambda_i}{1-\lambda_{n+1}}f(x_i)+\lambda_{n+1}f(x_{n+1})\label{1_5}\\
+         & = \sum_{i=1}^{n}\lambda_if(x_i)+\lambda_{n+1}f(x_{n+1})\nonumber\\
+         & = \sum_{i=1}^{n+1}\lambda_if(x_i)\nonumber
+      \end{align}
+      Use \eqref{1_1} to infer inequality from \eqref{1_3} to \eqref{1_4}\\
+      Besides, because of $$\frac{\lambda_i}{1-\lambda_{n+1}}>0 \text{ and } \sum_{i=1}^n\frac{\lambda_i}{1-\lambda_{n+1}}=1$$\\
+      We can infer \eqref{1_4} to \eqref{1_5} with \eqref{1_2}
+    \item
+      By mathematical induction and (a), (b), and (c),\\
+      we can prove that $$f(\sum_{i=1}^{M}\lambda_ix_i)\leq\sum_{i=1}^{M}\lambda_if(x_i)\quad\forall M\in\mathbb{N}\wedge M>2$$
+  \end{enumerate}
+\end{proof}
+\section{Entropy of the univariate Gaaussian (15\%)}
+\begin{proof}
+\begin{align}
+  H[x] & = \E[-\ln(p(x))]\nonumber\\
+       & = \E\left[-\ln\left(\frac{1}{(2\pi\sigma^2)^\frac{1}{2}}\exp^{-\frac{(x-\mu)^2}{2\sigma^2}}\right)\right]\label{2_1}\\
+       & = \E\left[\frac{1}{2}\ln(2\pi\sigma^2)+\frac{(x-\mu)^2}{2\sigma^2}\right]\label{2_2}\\
+       & = \frac{1}{2}\ln(2\pi\sigma^2)+\frac{1}{2\sigma^2}\E\left[(x-\mu)^2\right]\label{2_3}\\
+       & = \frac{1}{2}\ln(2\pi\sigma^2)+\frac{1}{2\sigma^2}\int_{-\infty}^{\infty}(x-\mu)^2p(x)\mathrm{d}x\label{2_4}\\
+       & = \frac{1}{2}\ln(2\pi\sigma^2)+\frac{1}{2\sigma^2}\sigma^2\label{2_5}\\
+       & = \frac{1}{2}\left(1+\ln(2\pi\sigma^2)\right)\nonumber
+\end{align}
+  From \eqref{2_1} to \eqref{2_2}, we perform basic log operation.\\
+  From \eqref{2_2} to \eqref{2_3}, we take out independent terms in expectations.\\
+  To get \eqref{2_5}, we substitude equation about variance in problem to \eqref{2_3}.\\
+  Therefore, we prove the equation $$H[x] = \frac{1}{2}\left(1+\ln(2\pi\sigma^2)\right)$$
+\end{proof}
+\section{KL divergence between two Gaussians (15\%)}
+Assume both $\sigma$ and $s$ are positive.
+\begin{align}
+  \mathrm{KL}(p\parallel q)
+    & = -\int p(x)\ln\left(\frac{q(x)}{p(x)}\right)\mathrm{d}x\nonumber\\
+    & = -\int p(x)\ln\left(\frac{\frac{1}{\sqrt{2\pi s^2}}\exp^{-\frac{(x-m)^2}{2s^2}}}{\frac{1}{\sqrt{2\pi\sigma^2}}\exp^{-\frac{(x-\mu)^2}{2\sigma^2}}}\right)\mathrm{d}x\nonumber\\
+    & = \int p(x)\left(\ln\left(\frac{s^2}{\sigma^2}\right)^\frac{1}{2}+\left(\frac{(x-m)^2}{2s^2}-\frac{(x-\mu)^2}{2\sigma^2}\right)\right)\mathrm{d}x\nonumber\\
+    & = \ln(\frac{s}{\sigma})+\frac{1}{2s^2}\int p(x)(x-m)^2\mathrm{d}x-\frac{1}{2\sigma^2}\int p(x)(x-\mu)^2\mathrm{d}x\label{3_1}
+\end{align}
+We calculate integral of second term in \eqref{3_1}
+\begin{align}
+  \int p(x)(x-m)^2\mathrm{d}x
+    & = \int p(x)(x-\mu+\mu-m)^2\mathrm{d}x\nonumber\\
+    & = \int (x-\mu)^2p(x)\mathrm{d}x+\int 2(x-\mu)(\mu-m)p(x)\mathrm{d}x+\int (\mu-m)^2p(x)\mathrm{d}x\nonumber\\
+    & = \sigma^2+2(\mu-m)\int (x-\mu)p(x)\mathrm{d}x+(\mu-m)^2\int p(x)\mathrm{d}x\nonumber\\
+    & = \sigma^2+(\mu-m)^2\label{3_2}
+\end{align}
+Substitude equation \eqref{3_2} to \eqref{3_1}, we get
+\begin{align*}
+  \mathrm{KL}(p\parallel q)
+    & = \ln(\frac{s}{\sigma})+\frac{1}{2s^2}\left(\sigma^2+(\mu-m)^2\right)-\frac{1}{2\sigma^2}\int p(x)(x-\mu)^2\mathrm{d}x\\
+    & = \ln(\frac{s}{\sigma})+\frac{1}{2s^2}\left(\sigma^2+(\mu-m)^2\right)-\frac{\sigma^2}{2\sigma^2}\\
+    & = \ln(\frac{s}{\sigma})+\frac{\sigma^2+(\mu-m)^2}{2s^2}-\frac{1}{2}
+\end{align*}
+\section{Polynomial Curve Fitting (30\%)}
+Please use ipython to check my solution to this problem.\\
+I use numpy, matplotlib, and pandas packages.
+\begin{lstlisting}
+run hw1_4.py
+hw1_4_1()
+hw1_4_2()
+hw1_4_3()
+\end{lstlisting}
+\section{Polynomial Regression (30\%)}
+Please use ipython to check my solution to this problem.\\
+I use numpy, scipy and matplotlib packages.
+\begin{lstlisting}
+run hw1_5.py
+hw1_5_1()
+hw1_5_2()
+\end{lstlisting}
+
+\end{document}

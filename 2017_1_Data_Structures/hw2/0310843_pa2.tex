@@ -1,0 +1,184 @@
+\documentclass[12pt]{article}%{{{
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[section]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{enumitem}
+\usepackage{textcomp,xspace}  %just for type <>
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{
+  language=C++,
+  aboveskip=3mm,
+  belowskip=3mm,
+  numbers=left,
+  frame=single,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle=\ttfamily,
+  numberstyle=\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  backgroundcolor=\color{black!5},
+}
+
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}%}}}
+
+\title{Homework \#2}
+\author{Shao Hua, Huang\\
+DEE2505 - Data Structures}
+
+\begin{document}
+\maketitle
+\section{Objective}
+\begin{enumerate}
+  \item To understand how an implementation of an ADT is used by an application program.
+  \item To become familiar with how to implement Linked List.
+  \item To understand how to use list in STL library in c++.
+\end{enumerate}
+\section{Pseudo code}
+Declare variable order (CLOCKWISE or COUNTERCLOCKWISE).\\
+Write a class Node whose members are id number and letters the person called out.\\
+Following are Node class declaration and pseudo codes of the program.\\\\
+\begin{lstlisting}%{{{
+
+enum {CLOCKWISE, COUNTERCLOCKWISE} order;
+class Node {
+  public:
+    Node(int id, string letter);
+    ~Node(){}
+    int getid();
+    string getletter();
+    void addletter(char, string);
+  private:
+    int id;
+    string letter;
+}
+\end{lstlisting}%}}}
+\begin{algorithm}%{{{
+  \caption{main}
+  \begin{algorithmic}[1]
+    \State $fin.open(argv[1])$
+    \State $fout.open(argv[2])$
+    \State $list$\textlangle Node\textrangle $mylist$
+    \State $list$\textlangle Node\textrangle $result$
+    \State $list$\textlangle Node\textrangle::iterator $it$
+    \State $order \gets$ CLOCKWISE
+    \State get input from $fin$, and push back id number to $mylist$ until negative number received
+    \State use iterator to find which person to be the first one, assign to $it$
+    \While{get string $str$ in $fin$}
+      \State $callTheWord(mylist, it, str)$
+      \State $changeOrderIfNeed(str)$
+      \State $oneOutFromGame(mylist, result, it)$
+    \EndWhile
+    \State push the last node in $mylist$ to $result$ list
+    \State use iterator to print out id numbers and letters in $result$ list
+    \State $fin.close()$
+    \State $fout.close()$
+  \end{algorithmic}
+\end{algorithm}%}}}
+\begin{algorithm}%{{{
+  \caption{callTheWord(list\textlangle Node\textrangle \&, list\textlangle Node\textrangle::iterator \&, string)}
+  \begin{algorithmic}[1]
+    \For{$i$ from $0$ to $str.size()-2$}
+      \If{$order$ = CLOCKWISE}
+        \State add letter $str[i]$ to current node's letter from back
+      \ElsIf{$order$ = COUNTERCLOCKWISE}
+        \State add letter $str[i]$ to current node's letter from front
+      \EndIf
+      \State $putItToNextPlace(mylist, it)$
+    \EndFor
+    \If{$order$ = CLOCKWISE}
+      \State add letter $str[str.size()-1]$ to current node's letter from back
+    \ElsIf{$order$ = COUNTERCLOCKWISE}
+      \State add letter $str[str.size()-1]$ to current node's letter from front 
+    \EndIf
+  \end{algorithmic}
+\end{algorithm}%}}}
+\begin{algorithm}%{{{
+  \caption{changeOrderIfNeed(string)}
+  \begin{algorithmic}[1]
+    \If{$str[str.size()-1]$ is not vowel}
+      \State $order\gets$ COUNTERCLOCKWISE
+    \Else
+      \State $order\gets$ CLOCKWISE
+    \EndIf
+  \end{algorithmic}
+\end{algorithm}%}}}
+\begin{algorithm}%{{{
+  \caption{oneOutFromGame(list\textlangle Node\textrangle \&, list\textlangle Node\textrangle \&, list\textlangle Node\textrangle ::iterator \&)}
+  \begin{algorithmic}[1]
+    \State copy current node and push back to $result$ list
+    \State pop current node by using erase function
+    \State $putItToNextPlace(mylist, it)$ 
+  \end{algorithmic}
+\end{algorithm}%}}}
+\begin{algorithm}%{{{
+  \caption{putItToNextPlace(list\textlangle Node\textrangle \&, list\textlangle Node\textrangle::iterator \&)}
+  \begin{algorithmic}[1]
+    \If{$order$ = CLOCKWISE}
+      \State let the iterator points to the next node
+      \If{the node does not exist, \textit{i.e.} $mylist.end()$}
+        \State $it\gets mylist.begin()$
+      \EndIf
+    \ElsIf{$order$ = COUNTERCLOCKWISE}
+      \If{the node is the first node, \textit{i.e.} $mylist.begin()$}
+        \State $it\gets mylist.end()$
+      \EndIf
+      \State let the iterator points to the previous node
+    \EndIf
+  \end{algorithmic}
+\end{algorithm}%}}}
+\section{Time complexity analysis}%{{{
+Let $n$ be number of participants in this game.\\
+Let $c$ be the upper bound letters of each word.
+\subsection{main}
+Line 7: push all id numbers to the list $\rightarrow O(n)$\\
+Line 8: find one number in the list $\rightarrow O(n)$\\
+Line 9: get $n-1$ strings in while loop $\rightarrow O(n)$\\
+Line 10: see 3.2 $\rightarrow O(c)$\\
+Line 11: see 3.3 $\rightarrow O(1)$\\
+Line 12: see 3.4 $\rightarrow O(1)$\\
+Line 15: print result list $\rightarrow O(n)$\\
+Other lines: $O(1)$
+\subsection{callTheWord}
+Line 1: enter for loop $str.size()-1$ times $\rightarrow O(c)$\\
+Line 7: see 3.5 $\rightarrow O(1)$\\
+Line 9 to 13: push $str[str.size()-1]$ to the list $\rightarrow O(1)$
+\subsection{changeOrderIfNeed}
+Line 1 to 5: change order if it needed $\rightarrow O(1)$
+\subsection{oneOutFromGame}
+Line 1 to 2: push current node to $result$ and erase the same node in $mylist\rightarrow O(1)$\\
+Line 3: see 3.5 $\rightarrow O(1)$
+\subsection{putItToNextPlace}
+Line 1 to 11: enter if to move iterator $\rightarrow O(1)$
+\subsection{Total time complexity}
+In main, we can see that\\
+Line 7 to 8: $O(n)$\\
+Line 9 to 12: $O(nc)$\\
+Line 15: $O(n)$\\
+Other line: $O(1)$\\
+Therefore, the total time complexity will be $O(nc)$ where n is total participants and c is upper bound letters of each word.%}}}
+\section{Conclusion}
+In this homework, I learned how to implement linked list by using list in STL library.\\
+List provided easy functions for me to use, and I also wrote a class called Node to store data.\\
+While getting each string input, the program is also doing tasks to simulate the game.\\
+It is not that difficult to implement the whole program, but it surely takes time and efforts.\\
+Besides, I also tried to make my code more understandable by refactoring.\\
+It improves my coding skill, and I am looking forward to the next homework.
+\end{document}
